@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assests/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <title>Add More Happiness</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="jumbotron jumbotron-fluid">
+
+                    <h1 class="display-4">Happy Gif</h1>
+                    <div id="new-buttons"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <form id="gif form"></form>
+
+                <input type="text" id="gif-input">
+
+                <input id="add-gif" type="submit" value="Add a New Gif">
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                </div>
+                <div id="gif-view"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+
+
+        var gifs = ["Cate", "Birb", "Doge", "Snek"];
+
+        function displayGif() {
+            var gif = $(this).attr("data-name");
+            var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=OgP4ziRBlicSDuOl21Jd4rpNiLOgbNwk&q=" + gif + "&limit=10&offset=0&rating=G&lang=en";
+
+
+
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (res) {
+
+                $("#gif-view").empty();
+                console.log(res);
+                //For loop to return all items in the array. 
+                for (let i = 0; i < res.data.length; i++) {
+
+                    var gifUrl = res.data[i].images.original.url;
+
+                    var $div = $("<div>");
+                    var $img = $("<img>").attr("src", gifUrl,  {width: '300px', height: '150px' });
+                    // Appends the image
+                    $div.append($img);
+                    $("#gif-view").prepend($div);
+
+                }
+            });
+        }
+
+        //makes new buttons that contain Gifs
+        function renderButton() {
+            //Restart the page to the initial values 
+            $("#new-buttons").empty();
+
+            //loop information so that it returns data in search box
+            for (let i = 0; i < gifs.length; i++) {
+                //Create the button (dynamic)
+                var button = $("<button>");
+                //Class 
+                button.addClass("gif");
+                //Added the ability to push info into the data input
+                button.attr("data-name", gifs[i]);
+                //Give text to buttons
+                button.text(gifs[i]);
+                //Make button appear
+                $("#new-buttons").append(button);
+
+            }
+        }
+        $("#add-gif").on("click", function (event) {
+            event.preventDefault();
+            var gif = $("#gif-input").val().trim();
+            gifs.push(gif);
+            renderButton()
+        });
+
+        $(document).on("click", ".gif", displayGif);
+
+        renderButton()
+
+
+    </script>
+
+</body>
+
+</html>
